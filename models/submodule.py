@@ -228,6 +228,14 @@ def regression_topk(cost, disparity_samples, k):
     disparity_samples = torch.gather(disparity_samples, 1, pool_ind)    
     pred = torch.sum(disparity_samples * prob, dim=1, keepdim=True)
     return pred
-    
 
-
+def regression_soft(cost, disparity_samples, temp=0.05):
+    """
+    cost: [B, D, H, W]
+    disparity_samples: [B, D, H, W]
+    temp: 温度参数，越小越接近top-k
+    """
+    # 将小代价转为大概率
+    prob = F.softmax(-cost / temp, dim=1)
+    pred = torch.sum(disparity_samples * prob, dim=1, keepdim=True)
+    return pred
