@@ -167,7 +167,9 @@ def build_gwc_volume_norm(refimg_fea, targetimg_fea, maxdisp, num_groups):
 def norm_correlation(fea1, fea2):
     cost = torch.mean(((fea1/(torch.norm(fea1, 2, 1, True)+1e-05)) * (fea2/(torch.norm(fea2, 2, 1, True)+1e-05))), dim=1, keepdim=True)
     return cost
-
+"""GwcNet / PSMNet
+基于归一化相关性（非简单拼接）
+"""
 def build_norm_correlation_volume(refimg_fea, targetimg_fea, maxdisp):
     B, C, H, W = refimg_fea.shape
     volume = refimg_fea.new_zeros([B, 1, maxdisp, H, W])
