@@ -239,3 +239,18 @@ def regression_soft(cost, disparity_samples, temp=0.05):
     prob = F.softmax(-cost / temp, dim=1)
     pred = torch.sum(disparity_samples * prob, dim=1, keepdim=True)
     return pred
+
+def regression_soft_rknn(cost, disparity_samples, temp=0.05, min_disp=0, max_disp=192):
+    """
+    cost: [B, D, H, W]
+    disparity_samples: [B, D, H, W]
+    temp: 温度参数
+    """
+    # 转负号，代价越小，概率越大
+    prob = F.softmax(-cost / temp, dim=1)
+    # 加权平均得到视差预测
+    pred = torch.sum(disparity_samples * prob, dim=1, keepdim=True)
+
+    # 限制输出范围（静态 clip）
+    pred = torch.clamp(pred, min=min_disp, max=max_disp)
+    return pred

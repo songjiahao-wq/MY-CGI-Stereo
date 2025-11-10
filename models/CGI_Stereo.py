@@ -505,7 +505,7 @@ class CGI_Stereo(nn.Module):
 
         # 基于代价体进行软回归：使用Top-K加权求和 (K=2)
         # 相比传统的argmin，这种方法能产生更平滑的视差图
-        pred = regression_topk(cost.squeeze(1), disp_samples, 2)  # [B, H/4, W/4]
+        pred = regression_soft(cost.squeeze(1), disp_samples, 2)  # [B, H/4, W/4]
 
         # === 10. 亚像素级上下文上采样 ===
         # 利用空间金字塔预测的偏移权重，实现亚像素级视差细化
