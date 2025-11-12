@@ -12,10 +12,6 @@ from pathlib import Path
 from glob import glob
 import os.path as osp
 
-from IGEVplusplus.core.utils import frame_utils
-from IGEVplusplus.core.utils.augmentor import FlowAugmentor, SparseFlowAugmentor
-
-
 class StereoDataset(data.Dataset):
     def __init__(self, aug_params=None, sparse=False, reader=None):
         self.augmentor = None
