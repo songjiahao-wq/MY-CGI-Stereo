@@ -298,21 +298,29 @@ if __name__ == '__main__':
 
     train_dataset, test_dataset = fetch_dataloader(args)
 
-    # 将dataset里的image_list和disp数据路径保存到txt里，每行左图、右图、disp
-    with open('train_dataset.txt', 'w') as f:
-        for img_pair, disp in zip(train_dataset.image_list, train_dataset.disparity_list):
-            left_img = img_pair[0].replace('\\', '/').replace("D:\project2024\stereo matching\DATA\SceneFlow/",'')
-            right_img = img_pair[1].replace('\\', '/').replace("D:\project2024\stereo matching\DATA\SceneFlow/",'')
-            disp_path = disp.replace('\\', '/').replace("D:\project2024\stereo matching\DATA\SceneFlow/",'')
-            f.write(f"{left_img} {right_img} {disp_path}\n")
+    # 生成数据集索引文件
+    def generate_index_file(dataset, filename, base_path):
+        """生成数据集索引文件"""
+        # 统一使用正斜杠格式的基础路径
+        base_path = base_path.replace('\\', '/')
+        if not base_path.endswith('/'):
+            base_path += '/'
 
-    with open('test_dataset.txt', 'w') as f:
-        for img_pair, disp in zip(test_dataset.image_list, test_dataset.disparity_list):
-            left_img = img_pair[0].replace('\\', '/').replace("D:\\project2024\\stereo matching\\DATA\\SceneFlow/",'')
-            right_img = img_pair[1].replace('\\', '/').replace("D:\\project2024\\stereo matching\\DATA\\SceneFlow/",'')
-            disp_path = disp.replace('\\', '/').replace("D:\\project2024\\stereo matching\\DATA\\SceneFlow/",'')
-            f.write(f"{left_img} {right_img} {disp_path}\n")
+        with open(filename, 'w') as f:
+            for img_pair, disp in zip(dataset.image_list, dataset.disparity_list):
+                left_img = img_pair[0].replace('\\', '/').replace(base_path, '')
+                right_img = img_pair[1].replace('\\', '/').replace(base_path, '')
+                disp_path = disp.replace('\\', '/').replace(base_path, '')
+                f.write(f"{left_img} {right_img} {disp_path}\n")
+        return len(dataset.image_list)
 
-    print("训练和测试数据集索引文件已生成:")
-    print(f"- train_dataset.txt: {len(train_dataset.image_list)} 个样本")
-    print(f"- test_dataset.txt: {len(test_dataset.image_list)} 个样本")
+    # 定义数据集基础路径
+    base_path = "D:/project2024/stereo matching/DATA/SceneFlow/"
+
+    # 生成训练和测试索引文件
+    train_count = generate_index_file(train_dataset, 'train_dataset.txt', base_path)
+    test_count = generate_index_file(test_dataset, 'test_dataset.txt', base_path)
+
+    print("数据集索引文件生成完成:")
+    print(f"- train_dataset.txt: {train_count} 个样本")
+    print(f"- test_dataset.txt: {test_count} 个样本")
